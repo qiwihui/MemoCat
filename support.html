@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>技术支持与常见问题 · MemoCat</title>
+  <meta name="description" content="MemoCat 桌面端与浏览器扩展使用指南、目录授权、扩展配对、MCP 接入配置与常见问题解答。">
+  <link rel="canonical" href="https://memocat.qiwihui.com/support.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://memocat.qiwihui.com/support.html">
+  <link rel="alternate" hreflang="en" href="https://memocat.qiwihui.com/en/support.html">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <main class="doc-main">
+    <nav class="doc-nav" aria-label="页面导航">
+      <a href="./">← 返回 MemoCat 首页</a>
+      <div class="doc-nav-right">
+        <a href="privacy.html">隐私政策</a>
+        <a href="en/support.html" lang="en">English</a>
+        <button id="site-theme-toggle" type="button" class="theme-btn" aria-label="切换页面主题">
+          <span class="theme-label">系统</span>
+        </button>
+      </div>
+    </nav>
+
+    <h1>技术支持</h1>
+    <p class="doc-meta">MemoCat v0.5.0 · 遇到问题或功能反馈，请在 <a href="https://github.com/qiwihui/MemoCat/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a> 提交，请注明系统版本与运行模式（桌面端 / 网页模式 / 扩展）。</p>
+
+    <h2>快速上手</h2>
+    <ol>
+      <li><strong>授权本机来源</strong>：打开桌面端左侧「数据管道」，展开 Codex（<code>~/.codex</code>）、Claude Code（<code>~/.claude/projects</code>）、Grok Bot 或 Antigravity，点击「选择文件夹…」授予只读目录权限后开启开关并点击「立即同步」。</li>
+      <li><strong>连接浏览器扩展</strong>：在 Chrome / Edge 加载 <code>dist/memocat-extension</code>，打开受支持的 AI 对话网站点击页面右下角「Memo · 保存此对话」（或开启自动保存），然后在扩展「采集与桌面同步」点击「一键连接 MemoCat 并同步」。</li>
+      <li><strong>配置跨 AI MCP 召回</strong>：在桌面端「数据管道 → 本机 MCP 服务端点」中复制 Codex、Claude Code 或通用客户端配置，勾选允许读取的来源白名单后，点击「测试握手」确认 <code>127.0.0.1:3792</code> 服务可用。</li>
+    </ol>
+
+    <h2>常见问题</h2>
+
+    <details class="faq-item">
+      <summary>在 macOS 沙盒桌面版中，如何选取以点号开头的隐藏目录（如 <code>~/.codex</code>）？</summary>
+      <p>在「数据管道」点击来源卡片下的「选择文件夹…」，MemoCat 调用的文件选择器默认已开启显示隐藏文件（<code>showHiddenFiles</code>）。如果系统对话框仍未显示隐藏文件夹，可直接按下快捷键 <code>⌘ + Shift + .</code> 显示隐藏目录，或按下 <code>⌘ + Shift + G</code> 粘贴绝对路径后确认授权。授权凭据会通过 macOS Security-Scoped Bookmarks 持久化保存，重启后无需重新选择。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>浏览器扩展提示连接失败，或重置密钥/重新加载扩展后无法同步怎么办？</summary>
+      <p>请先确认 MemoCat 桌面应用或网页服务正在运行（默认监听 <code>http://127.0.0.1:3792</code>）。若您在桌面端点击了「重置密钥」，或在浏览器重新加载未打包扩展导致扩展 ID 变化，只需在扩展「采集与桌面同步」页再次点击「一键连接 MemoCat 并同步」，扩展会自动重新完成本机配对并保留待同步队列。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>为什么网页端很早之前的折叠消息或网页里的远程图片没有进入扩展存档？</summary>
+      <p>MemoCat 浏览器扩展仅解析当前网页 DOM 中已经加载渲染出来的文字内容，不会调用聊天网站的私有接口批量拉取历史，也不会主动下载远程图片或音视频文件。遇到页面启用了虚拟列表时，向上滚动加载过的内容若被扩展观察到，会通过局部窗口合并策略保留在本地 IndexedDB 中，不会被后续更新截断。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>如何限制 Codex 或 Claude Code 通过 MCP 只读部分资料来源？</summary>
+      <p>前往桌面端「数据管道 → 输出 · 本机 MCP 服务端点」，展开对应客户端（例如 <code>Codex</code>），取消勾选「全部已保存来源」，只勾选允许其召回的来源（如仅勾选 <code>Codex</code> 和 <code>ChatGPT</code>）并点击「保存资料范围」。如果不选择任何来源，该客户端调用 <code>recall</code> 与 <code>list_conversations</code> 时会被服务端拒绝。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>本地数据保存在哪里？如何备份或彻底清除？</summary>
+      <p>本机网页模式默认存储在 <code>~/.memocat/&lt;用户ID&gt;/memo.sqlite</code>（可通过环境变量 <code>MEMO_DATA_DIR</code> 指定）；桌面版存储在应用 <code>userData</code> 目录下的 <code>library/memo.sqlite</code>。可在「设置 → 本地资料目录」查看具体路径。备份前请先退出应用，再完整复制该数据目录；需要清除时直接退出后删除目录即可。浏览器扩展可在「存储与设置」导出全量 JSON 备份或点击「清空资料库」。</p>
+    </details>
+
+    <h2>安全与隐私</h2>
+    <p>MemoCat 为纯本机离线软件，不设云端服务器或遥测。详见 <a href="privacy.html">隐私政策</a>。</p>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <span>MemoCat v0.5.0 · 技术支持</span>
+      <div class="footer-links">
+        <a href="./">产品主页</a>
+        <a href="privacy.html">隐私政策</a>
+        <a href="en/support.html" lang="en">English</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>
