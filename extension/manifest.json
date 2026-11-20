@@ -1,0 +1,110 @@
+{
+  "manifest_version": 3,
+  "name": "MemoCat · AI 对话归档",
+  "version": "0.5.0",
+  "description": "在本机保存、搜索和导出 AI 对话，可选择同步到 MemoCat 桌面资料库。",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://chat.deepseek.com/*",
+    "https://yuanbao.tencent.com/*",
+    "https://www.doubao.com/*",
+    "https://kimi.moonshot.cn/*",
+    "https://kimi.com/*",
+    "https://*.kimi.com/*",
+    "https://qianwen.com/*",
+    "https://www.qianwen.com/*",
+    "https://x.com/i/grok*",
+    "https://grok.com/*",
+    "https://www.grok.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "MemoCat",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "library.html#settings",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://chat.deepseek.com/*",
+        "https://yuanbao.tencent.com/*",
+        "https://www.doubao.com/*",
+        "https://kimi.moonshot.cn/*",
+        "https://kimi.com/*",
+        "https://*.kimi.com/*",
+        "https://qianwen.com/*",
+        "https://www.qianwen.com/*",
+        "https://x.com/i/grok*",
+        "https://grok.com/*",
+        "https://www.grok.com/*"
+      ],
+      "js": [
+        "lib/core.js",
+        "lib/adapters.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src http://127.0.0.1:*; object-src 'none'; base-uri 'none'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sidebar.html",
+        "sidebar.js",
+        "sidebar.css",
+        "ui.css",
+        "ui-api.js",
+        "lib/core.js",
+        "icons/icon64.png",
+        "icons/platforms/*.png"
+      ],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://chat.deepseek.com/*",
+        "https://yuanbao.tencent.com/*",
+        "https://www.doubao.com/*",
+        "https://kimi.moonshot.cn/*",
+        "https://kimi.com/*",
+        "https://*.kimi.com/*",
+        "https://qianwen.com/*",
+        "https://www.qianwen.com/*",
+        "https://x.com/*",
+        "https://grok.com/*",
+        "https://www.grok.com/*"
+      ]
+    }
+  ]
+}

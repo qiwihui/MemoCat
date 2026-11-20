@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MemoCat · 本地 AI 对话归档、结构化工作台与跨 AI MCP 记忆召回</title>
+  <meta name="description" content="MemoCat 将本机终端与桌面 AI 工具（Codex、Claude Code、Grok Bot、Antigravity）和网页端 AI 对话（ChatGPT、Claude、Gemini、DeepSeek 等 9 大平台）统一归档至本机 SQLite，提供全文检索、双栏对话阅读与本机 HTTP MCP 跨工具记忆召回。">
+  <link rel="canonical" href="https://memocat.qiwihui.com/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://memocat.qiwihui.com/">
+  <link rel="alternate" hreflang="en" href="https://memocat.qiwihui.com/en/">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <link rel="stylesheet" href="assets/site.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MemoCat · 本地 AI 对话归档与跨 AI MCP 记忆工作台">
+  <meta property="og:description" content="纯本机离线存储与检索：macOS 桌面端 + Chrome MV3 浏览器扩展，统一管理 4 类本机 AI 日志与 9 大网页 AI 对话。">
+  <meta property="og:image" content="https://memocat.qiwihui.com/assets/workbench-light.png">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./">
+        <img src="assets/icon.png" alt="MemoCat 图标" width="30" height="30">
+        <span>MemoCat</span>
+        <span class="version-pill">v0.5.0</span>
+      </a>
+      <nav class="navlinks" aria-label="主导航">
+        <a href="#platforms">支持平台</a>
+        <a href="#features">核心机制</a>
+        <a href="#mcp">MCP 互通</a>
+        <a href="#install">安装运行</a>
+        <a href="support.html">技术支持</a>
+        <a href="privacy.html">隐私政策</a>
+        <a href="en/" lang="en">English</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="site-theme-toggle" type="button" class="theme-btn" aria-label="切换页面主题">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/>
+          </svg>
+          <span class="theme-label">系统</span>
+        </button>
+        <a class="nav-cta" href="#install">开始使用</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-head">
+          <div class="eyebrow">
+            <span class="eyebrow-dot" aria-hidden="true"></span>
+            <span>纯本机离线架构 · macOS 桌面应用 + Chrome 浏览器扩展</span>
+          </div>
+          <h1>把散落在各处的 AI 对话，<br>整理为本机可检索、可召回的记忆工作台</h1>
+          <p class="hero-lead">MemoCat 在本机统一归档 Codex、Claude Code、Grok Bot、Antigravity 的本地日志与 9 大网页 AI 平台的对话记录，存入单机 SQLite 数据库；支持双栏阅读、全文检索与 <code>127.0.0.1:3792</code> HTTP MCP 跨工具记忆召回。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">下载与构建说明</a>
+            <a class="btn btn-secondary" href="https://github.com/qiwihui/MemoCat" target="_blank" rel="noopener noreferrer">GitHub 仓库 ↗</a>
+          </div>
+          <div class="hero-chips">
+            <span class="metric-chip">4 类本机 AI 日志只读导入</span>
+            <span class="metric-chip">9 大网页 AI 扩展采集</span>
+            <span class="metric-chip">HTTP MCP 跨会话召回</span>
+            <span class="metric-chip">无账号 · 无云端 · 无遥测</span>
+          </div>
+        </div>
+
+        <div class="showcase-wrap">
+          <div class="showcase-tabs" role="tablist" aria-label="MemoCat 界面预览">
+            <button type="button" class="showcase-tab active" role="tab" aria-selected="true"
+              data-src="assets/workbench-light.png"
+              data-alt="MemoCat 会话工作台浅色模式界面"
+              data-title="会话工作台（浅色）"
+              data-desc="左栏来源胶囊筛选与 ⌘K 全文检索，右栏结构化左右聊天气泡与代码复制。">会话工作台 · 浅色</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="assets/workbench-dark.png"
+              data-alt="MemoCat 会话工作台深色模式界面"
+              data-title="会话工作台（深色）"
+              data-desc="支持跟随系统、浅色与深色三态主题切换，桌面端与扩展共用一致的阅读层级。">会话工作台 · 深色</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="assets/recall-sandbox.png"
+              data-alt="MemoCat 记忆召回沙盒与 MCP 取用审计流"
+              data-title="记忆召回与 MCP 审计"
+              data-desc="主查询 + 最多 8 条补充关键词双轨打分，实时显示 9,600 Token 预算与外部客户端取用快照。">记忆召回与审计</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="assets/data-pipeline.png"
+              data-alt="MemoCat 数据管道与本机 MCP 端点配置"
+              data-title="数据管道与来源白名单"
+              data-desc="管理本机目录授权、浏览器扩展配对，以及各 MCP 客户端的独立开关与资料白名单。">数据管道与白名单</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="assets/storage-stats.png"
+              data-alt="MemoCat 存储洞察与入库统计图表"
+              data-title="存储洞察与入库统计"
+              data-desc="统计 SQLite 资料库实际磁盘占用、7/30 天按日入库增量分布与来源消息占比。">存储洞察与统计</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="assets/extension-library.png"
+              data-alt="MemoCat Chrome 浏览器扩展对话工作台"
+              data-title="Chrome 浏览器扩展工作台"
+              data-desc="独立 IndexedDB 归档、多平台筛选、Markdown/JSON 导入导出，一键配对同步至桌面端。">浏览器扩展工作台</button>
+          </div>
+
+          <div class="showcase-frame">
+            <div class="showcase-screen">
+              <img id="showcase-img" src="assets/workbench-light.png" alt="MemoCat 会话工作台浅色模式界面" width="2880" height="1800">
+            </div>
+            <div class="showcase-caption">
+              <span><strong id="showcase-title">会话工作台（浅色）</strong>：<span id="showcase-desc">左栏来源胶囊筛选与 ⌘K 全文检索，右栏结构化左右聊天气泡与代码复制。</span></span>
+              <span>实际运行截图 · MemoCat v0.5.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="platforms" class="section section-alt" aria-labelledby="platforms-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">输入采集</span>
+          <h2 id="platforms-title">双端输入：本机 AI 工具日志与网页端对话</h2>
+          <p>桌面端以只读方式解析本机客户端会话日志；浏览器扩展在用户授权的 AI 网页端采集已加载对话，并通过本机回环通道增量同步到同一资料库。</p>
+        </div>
+
+        <div class="platform-columns">
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <div>
+                <h3>本机终端与桌面 AI 日志</h3>
+                <p>逐行流式读取，不回写或修改原始日志文件</p>
+              </div>
+              <span class="pill">4 个适配器</span>
+            </div>
+
+            <div class="source-grid">
+              <div class="source-item">
+                <img src="assets/platforms/codex.png" alt="Codex" width="34" height="34">
+                <div>
+                  <strong>Codex</strong>
+                  <code>~/.codex</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="assets/platforms/claude-code.png" alt="Claude Code" width="34" height="34">
+                <div>
+                  <strong>Claude Code</strong>
+                  <code>~/.claude/projects</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="assets/platforms/grok-bot.png" alt="Grok Bot" width="34" height="34">
+                <div>
+                  <strong>Grok Bot</strong>
+                  <code>~/Library/.../Grok Bot</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="assets/platforms/antigravity.png" alt="Antigravity" width="34" height="34">
+                <div>
+                  <strong>Antigravity</strong>
+                  <code>~/.gemini/antigravity</code>
+                </div>
+              </div>
+            </div>
+
+            <ul class="feature-bullets">
+              <li><strong>沙盒只读目录授权</strong>：桌面版使用 macOS 原生目录选择器与 Security-Scoped Bookmarks 持久化授权，支持选取隐藏目录。</li>
+              <li><strong>大日志流式解析</strong>：按行读取 JSONL 与 `.blob` 副本，取消 64MB 单文件限制；读取前后校验文件标识、大小与修改时间，遇到半截写入或损坏行时保留上次成功版本。</li>
+              <li><strong>附件与图片本地缓存</strong>：提取内嵌 base64 及本地引用图片（PNG/JPEG/GIF/WebP，单张上限 32MB）按哈希缓存在本机，支持点击放大查看。</li>
+              <li><strong>可调定时同步</strong>：支持配置 1–1440 分钟定时检查（默认 5 分钟），多份副本日志自动合并去重，不重复计入今日增量。</li>
+            </ul>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <div>
+                <h3>浏览器扩展（Manifest V3）</h3>
+                <p>在支持的 AI 对话页面内嵌保存胶囊与侧边抽屉</p>
+              </div>
+              <span class="pill pill-green">9 大网页平台</span>
+            </div>
+
+            <div class="web-grid">
+              <div class="web-item"><img src="assets/platforms/chatgpt.png" alt="ChatGPT" width="22" height="22"><span>ChatGPT</span></div>
+              <div class="web-item"><img src="assets/platforms/claude.png" alt="Claude" width="22" height="22"><span>Claude</span></div>
+              <div class="web-item"><img src="assets/platforms/gemini.png" alt="Gemini" width="22" height="22"><span>Gemini</span></div>
+              <div class="web-item"><img src="assets/platforms/deepseek.png" alt="DeepSeek" width="22" height="22"><span>DeepSeek</span></div>
+              <div class="web-item"><img src="assets/platforms/yuanbao.png" alt="腾讯元宝" width="22" height="22"><span>腾讯元宝</span></div>
+              <div class="web-item"><img src="assets/platforms/doubao.png" alt="豆包" width="22" height="22"><span>豆包</span></div>
+              <div class="web-item"><img src="assets/platforms/kimi.png" alt="Kimi" width="22" height="22"><span>Kimi</span></div>
+              <div class="web-item"><img src="assets/platforms/qianwen.png" alt="千问" width="22" height="22"><span>千问</span></div>
+              <div class="web-item"><img src="assets/platforms/grok.png" alt="Grok" width="22" height="22"><span>Grok</span></div>
+            </div>
+
+            <ul class="feature-bullets">
+              <li><strong>局部窗口增量合并</strong>：采用 `MemoCore.reconcile` 策略按稳定消息 ID 与精确文本游标合并更新，网页虚拟列表卸载早期 DOM 节点时不会丢失已保存记录。</li>
+              <li><strong>三端扩展界面</strong>：包含页面悬浮按钮与右侧抽屉栏、工具栏弹出面板，以及独立全屏资料工作台（支持修改标题、重新采集、来源链接回跳）。</li>
+              <li><strong>独立备份与恢复</strong>：数据存储在浏览器 IndexedDB（`unlimitedStorage`），支持单会话 Markdown/JSON 导出与全库增量合并导入。</li>
+              <li><strong>可靠本机交接</strong>：通过 `127.0.0.1` 自动配对并下发 256 位随机连接密钥；待同步队列采用单调序号与 `changeId` CAS 确认，防止乱序覆盖或删除状态丢失。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section" aria-labelledby="features-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">核心架构</span>
+          <h2 id="features-title">结构化阅读、混合召回与可审计交付</h2>
+          <p>后端仅使用 Node.js 24 内置模块与 <code>node:sqlite</code>，桌面端和本机网页版共享同一套检索、去重与权限校验核心。</p>
+        </div>
+
+        <div class="capability-grid">
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M13 9h4M13 13h4"/></svg>
+            </div>
+            <h3>双栏会话工作台</h3>
+            <p>按时间线与来源快速筛选会话，右栏采用用户靠右、AI 靠左的气泡布局，自动合并同一回合的连续工具回复段。</p>
+            <ul class="spec-list">
+              <li>检索快捷键：<code>⌘K</code> 标题、正文与代码关键词</li>
+              <li>键盘快速切换：<code>↑</code> / <code>↓</code> 列表导航与右侧提问目录条</li>
+              <li>复用与导出：一键「复制为 Prompt」XML 上下文、Markdown 或 <code>.md</code> 文件</li>
+              <li>窗口自适应：<code>&lt; 600px</code> 窄屏（1/4 屏）自动切换底部标签栏</li>
+            </ul>
+          </article>
+
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8 11h6M11 8v6"/></svg>
+            </div>
+            <h3>混合检索与区域预算</h3>
+            <p>内置 SQLite WAL 与 FTS5 trigram 索引，同时结合面向对话回合结构的 BM25 邻域平滑算法，把召回片段控制在可用上下文预算内。</p>
+            <ul class="spec-list">
+              <li>分词策略：CJK Bigram 与英文/数字词元混合切分</li>
+              <li>权重配比：用户提问 <code>2.5</code> / AI 回复 <code>1.0</code>；主查询 <code>1.0</code> / 补充词 <code>0.72</code></li>
+              <li>区域扩展：5 邻域平滑核扩展高相关上下文并合并重叠区间</li>
+              <li>输出上限：每次最多 <code>8</code> 个区域、累计约 <code>9,600 token</code></li>
+            </ul>
+          </article>
+
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>上下文去重与交付审计</h3>
+            <p>通过会话上下文标识与交付状态机记录每次召回，避免同一 AI 对话反复读入相同片段，并保留完整的取用审计记录。</p>
+            <ul class="spec-list">
+              <li>会话隔离：首次召回签发 <code>process_id</code> 并绑定调用方（caller）</li>
+              <li>三态交付：<code>prepared</code> / <code>committed</code> / <code>abandoned</code> 状态追踪</li>
+              <li>完整去重：已成功返回的完整单元不重复返回；截断片段允许补全</li>
+              <li>审计快照：在「MCP 取用审计流」中回溯当时交付的原文</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="mcp" class="section section-alt" aria-labelledby="mcp-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">跨 AI 互通</span>
+          <h2 id="mcp-title">本机 Streamable HTTP MCP 服务端点</h2>
+          <p>桌面端或网页模式运行时默认监听 <code>http://127.0.0.1:3792</code>，通过无状态 JSON-RPC 2.0 POST 为各本地 AI 工具提供受控记忆检索，按客户端独立配置开关与允许读取的来源白名单。</p>
+        </div>
+
+        <div class="mcp-layout">
+          <div class="mcp-tools">
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">recall</span>
+                <span class="pill">核心召回工具</span>
+              </div>
+              <p>接受主查询 <code>query</code>、最多 8 条同义/跨语言补充词 <code>alternatives</code>、日期范围 <code>from/to</code>、来源过滤与续传 <code>process_id</code>。触发前自动按需同步已开启来源，返回附带来源路径与时间的分段上下文。</p>
+            </article>
+
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">list_conversations</span>
+                <span class="pill">日期清单工具</span>
+              </div>
+              <p>按主机所在时区列出指定起止日期（含首尾最多 31 天）内的历史会话元数据清单，受当前客户端的资料来源白名单约束。</p>
+            </article>
+
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">独立白名单与策略检查</span>
+                <span class="pill pill-green">客户端隔离</span>
+              </div>
+              <p><code>/mcp/codex</code>、<code>/mcp/claude-code</code> 与 <code>/mcp/other-local</code> 拥有各自独立的启用开关和资料范围。未选定任何来源时拒绝取用；配置在检索途中变化时自动中止当前交付。</p>
+            </article>
+          </div>
+
+          <div class="code-panel">
+            <div class="code-tabs">
+              <div class="code-tab-group" role="tablist" aria-label="MCP 客户端配置示例">
+                <button type="button" class="code-tab active"
+                  data-code='[mcp_servers.memocat]&#10;url = "http://127.0.0.1:3792/mcp/codex"'
+                  data-meta="目标文件：~/.codex/config.toml · 在「数据管道」可一键复制并测试握手">Codex (TOML)</button>
+                <button type="button" class="code-tab"
+                  data-code='claude mcp add --transport http --scope user memocat http://127.0.0.1:3792/mcp/claude-code'
+                  data-meta="终端执行接入命令，并在 Claude Code 中重新加载 MCP 服务">Claude Code (CLI)</button>
+                <button type="button" class="code-tab"
+                  data-code='{&#10;  "mcpServers": {&#10;    "memocat": {&#10;      "type": "http",&#10;      "url": "http://127.0.0.1:3792/mcp/other-local"&#10;    }&#10;  }&#10;}'
+                  data-meta="适用于支持 Streamable HTTP MCP 的其他本机客户端（需先在数据管道中开启端点）">其他本机客户端 (JSON)</button>
+              </div>
+              <button id="mcp-copy-btn" type="button" class="copy-btn" data-copied="已复制">复制配置</button>
+            </div>
+            <pre><code id="mcp-code-content">[mcp_servers.memocat]
+url = "http://127.0.0.1:3792/mcp/codex"</code></pre>
+            <div id="mcp-code-meta" class="code-meta">目标文件：~/.codex/config.toml · 在「数据管道」可一键复制并测试握手</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="trust-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">隐私与边界</span>
+          <h2 id="trust-title">本机闭环安全设计与已知边界</h2>
+          <p>所有解析、存储与检索都在你的设备本地完成。下面列出实际实现的安全机制与当前版本的工程边界。</p>
+        </div>
+
+        <div class="trust-grid">
+          <div class="trust-card">
+            <h3>零云端服务器与零遥测</h3>
+            <p>不设云端账号，不上传聊天内容或文件路径，不包含统计、广告或崩溃上报 SDK（Mac App Store 隐私清单声明 <code>NSPrivacyTracking = false</code>）。</p>
+          </div>
+          <div class="trust-card">
+            <h3>严格的本机回环校验</h3>
+            <p>HTTP 服务仅绑定 <code>127.0.0.1</code>，校验 <code>Host</code>、<code>Origin</code> 与 <code>Sec-Fetch-Site</code>；浏览器扩展同步接口仅对配对的 32 位扩展 ID 与 256 位随机 Bearer 密钥开放。</p>
+          </div>
+          <div class="trust-card">
+            <h3>沙盒隔离与内容清洗</h3>
+            <p>Electron 启用 <code>contextIsolation</code> 与 <code>sandbox</code>；浏览器扩展严格限制 <code>script-src 'self'</code>；Markdown 渲染经过 DOMPurify 过滤，禁止不安全标签与内联样式。</p>
+          </div>
+          <div class="trust-card">
+            <h3>独立数据目录与随时清除</h3>
+            <p>本机网页模式默认保存于 <code>~/.memocat/&lt;用户ID&gt;/memo.sqlite</code>（支持 <code>MEMO_DATA_DIR</code> 覆盖），桌面端保存于应用沙盒数据目录，可随时复制备份或整目录移除。</p>
+          </div>
+        </div>
+
+        <div class="boundary-box">
+          <h3>当前实现边界说明（v0.5.0）</h3>
+          <ul>
+            <li>本地 <code>memo.sqlite</code> 与扩展导出的 JSON 备份文件均以明文保存对话文本，当前未在应用层额外加密，请依托操作系统磁盘加密与目录权限保护。</li>
+            <li>浏览器扩展仅采集当前网页中已加载的文本消息，不调用平台私有接口拉取未展开的历史，也不会自动下载网页中的图片、音频或视频。</li>
+            <li>桌面端安装包脚本（<code>npm run build:dmg</code> / <code>npm run build:mas</code>）与正式 App Store 签名需搭配本机环境与 Apple 开发者证书使用；本地开发与自用可通过 Node.js 24+ 直接运行。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="section section-alt" aria-labelledby="install-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">快速开始</span>
+          <h2 id="install-title">三种方式运行 MemoCat</h2>
+          <p>需要 Node.js 24+（内建 <code>node:sqlite</code>）。你可以以桌面应用、零运行时外部后端依赖的本机网页版，或 Chrome 扩展单独/联动使用。</p>
+        </div>
+
+        <div class="install-grid">
+          <article class="install-card">
+            <span class="install-step">方式 01 · macOS 桌面应用</span>
+            <h3>Electron 桌面端</h3>
+            <p>支持 macOS 原生菜单栏、快捷键（<code>⌘1..5</code>）、系统托盘后台驻留（默认保持 3792 端口服务）及 DMG / MAS 打包。</p>
+            <pre class="install-cmd"><code>git clone https://github.com/qiwihui/MemoCat.git
+cd MemoCat
+npm install
+npm run desktop</code></pre>
+            <p>构建本地安装包：执行 <code>npm run build:dmg</code> 输出 macOS 磁盘映像。</p>
+          </article>
+
+          <article class="install-card">
+            <span class="install-step">方式 02 · 本机网页服务</span>
+            <h3>Node.js 原生网页工作台</h3>
+            <p>服务端完全依赖 Node.js 24 内置模块，打开 <code>http://127.0.0.1:3792</code> 即可使用完整浏览、召回与 MCP 能力。</p>
+            <pre class="install-cmd"><code>npm start
+# 自定义数据目录与端口
+MEMO_DATA_DIR=/path/to/data PORT=3792 npm start</code></pre>
+            <p>macOS 用户也可在克隆目录后直接双击 <code>Start MemoCat.command</code> 启动。</p>
+          </article>
+
+          <article class="install-card">
+            <span class="install-step">方式 03 · Chrome / Edge 扩展</span>
+            <h3>浏览器扩展加载</h3>
+            <p>构建 Manifest V3 扩展包后在浏览器扩展管理页开启「开发者模式」加载解压目录，即可单独归档或一键配对桌面端。</p>
+            <pre class="install-cmd"><code>npm run build:extension
+# 在 chrome://extensions 加载目录：
+# dist/memocat-extension</code></pre>
+            <p>加载后点击「一键连接 MemoCat 并同步」即可与运行中的 3792 服务自动完成配对。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <span>MemoCat v0.5.0 · 纯本机 AI 对话归档与召回工作台</span>
+      <div class="footer-links">
+        <a href="privacy.html">隐私政策</a>
+        <a href="support.html">技术支持</a>
+        <a href="en/" lang="en">English</a>
+        <a href="https://github.com/qiwihui/MemoCat" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

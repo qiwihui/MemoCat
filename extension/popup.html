@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>MemoCat</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="popup">
+  <header class="popup-header">
+    <img src="icons/icon64.png" alt="">
+    <div class="popup-brand-copy">
+      <strong>MemoCat</strong>
+      <small>本地 AI 对话归档</small>
+    </div>
+    <button id="popup-theme-btn" type="button" class="popup-theme-btn" title="切换外观主题" aria-label="切换外观主题">
+      <svg class="theme-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
+    </button>
+    <span class="local-tag" id="sync-pill">本机</span>
+  </header>
+  <main>
+    <div class="popup-stats">
+      <div><strong id="conversations">—</strong><small>段对话</small></div>
+      <div><strong id="messages">—</strong><small>条消息</small></div>
+    </div>
+    <button id="capture" class="primary wide">保存当前对话</button>
+    <p id="status" role="status">仅采集页面已加载的文字消息。</p>
+    <label class="toggle-row"><span>自动保存对话</span><input id="auto" type="checkbox" role="switch"></label>
+    <button id="sync-app" class="secondary wide">连接并同步到 MemoCat</button>
+    <button id="library" class="secondary wide">打开完整工作台 <span>↗</span></button>
+  </main>
+  <footer>本地存储 · 无遥测</footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

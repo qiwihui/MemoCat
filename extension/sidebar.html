@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>MemoCat</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="cm-shell">
+  <!-- 顶部工作栏 -->
+  <header class="cm-topbar">
+    <div class="cm-topbar-brand">
+      <img src="icons/icon64.png" alt="" class="cm-topbar-logo">
+      <span class="cm-topbar-title">MemoCat</span>
+      <span class="cm-topbar-stats" aria-label="已保存统计">
+        <strong id="stat-total">0</strong> 段 · 今日 +<strong id="stat-today">0</strong>
+      </span>
+    </div>
+    <div class="cm-topbar-actions">
+      <button id="topbar-capture-btn" type="button" class="cm-icon-btn accent" title="立即保存当前对话" aria-label="立即保存当前对话">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      </button>
+      <button id="sidebar-theme-btn" type="button" class="cm-icon-btn" title="切换外观主题" aria-label="切换外观主题">
+        <svg class="cm-theme-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
+      </button>
+      <button id="open-library" type="button" class="cm-icon-btn" title="打开完整资料库" aria-label="打开完整资料库">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </button>
+      <button id="close-sidebar" type="button" class="cm-icon-btn" title="关闭" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 顶部横向分段导航 -->
+  <nav class="cm-nav-tabs" aria-label="插件导航">
+    <button type="button" id="nav-memories" class="cm-nav-tab active" aria-current="page">对话记忆</button>
+    <button type="button" id="nav-connections" class="cm-nav-tab">采集与同步</button>
+    <button type="button" id="nav-settings" class="cm-nav-tab">存储设置</button>
+  </nav>
+
+  <div class="cm-body">
+    <div class="cm-main">
+      <!-- 1. 记忆列表视图 -->
+      <section id="tab-panel-memories" class="cm-view">
+        <div class="cm-search-bar">
+          <div class="cm-search-box">
+            <svg class="cm-search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="search-input" type="search" placeholder="搜索对话标题或内容…" aria-label="搜索对话标题或内容">
+            <button id="clear-search" type="button" class="cm-search-btn" hidden title="清空搜索" aria-label="清空搜索">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <button id="filter-toggle" type="button" class="cm-search-btn" title="筛选" aria-label="筛选">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .78 1.63l-5.78 7.22V19a1 1 0 0 1-.55.89l-4 2A1 1 0 0 1 9 21v-9.15L3.22 4.63A1 1 0 0 1 3 4Z"/></svg>
+            </button>
+          </div>
+
+          <div id="sidebar-platform-pills" class="cm-platform-pills" role="group" aria-label="平台快速筛选"></div>
+
+          <!-- 筛选下拉框 -->
+          <div id="filter-dropdown" class="cm-filter-popover" hidden>
+            <div class="cm-filter-section">
+              <label class="cm-filter-label">日期范围</label>
+              <div class="cm-quick-dates">
+                <button type="button" id="date-week" class="cm-chip-btn">最近一周</button>
+                <button type="button" id="date-month" class="cm-chip-btn">最近一月</button>
+              </div>
+              <div class="cm-date-inputs">
+                <label><span>开始日期</span><input type="date" id="filter-from"></label>
+                <label><span>结束日期</span><input type="date" id="filter-to"></label>
+              </div>
+            </div>
+            <div class="cm-filter-section">
+              <label class="cm-filter-label">平台来源</label>
+              <select id="filter-platform" class="cm-select">
+                <option value="">全部平台</option>
+              </select>
+            </div>
+            <div class="cm-filter-actions">
+              <button type="button" id="apply-filter" class="cm-pill-btn accent">筛选</button>
+              <button type="button" id="reset-filter" class="cm-pill-btn muted">清空筛选</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="memories-list" class="cm-cards-list" role="region" aria-label="对话记忆列表"></div>
+        <button id="load-more" type="button" class="cm-pill-btn muted wide" hidden>加载更多</button>
+      </section>
+
+      <!-- 2. 对话详情视图（结构化回合块） -->
+      <section id="tab-panel-detail" class="cm-view cm-detail-view" hidden>
+        <div class="cm-detail-header">
+          <div class="cm-detail-title-row">
+            <button id="detail-back" type="button" class="cm-icon-btn back" title="返回对话列表" aria-label="返回对话列表">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2 id="detail-title" class="cm-detail-title"></h2>
+            <input id="detail-title-input" type="text" class="cm-detail-title-input" hidden>
+            <button id="detail-edit-title" type="button" class="cm-icon-btn" title="修改对话标题" aria-label="修改对话标题">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button id="detail-copy-inline" type="button" class="cm-icon-btn" title="复制全文 Markdown" aria-label="复制全文 Markdown">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button id="detail-recapture-btn" type="button" class="cm-icon-btn" title="重新采集此对话" aria-label="重新采集此对话">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </button>
+            <div class="cm-menu-wrap">
+              <button id="detail-more-btn" type="button" class="cm-icon-btn" title="更多操作" aria-label="更多操作">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+              </button>
+              <div id="detail-more-menu" class="cm-dropdown-menu" hidden>
+                <button type="button" id="detail-recapture">重新采集</button>
+                <button type="button" id="detail-copy">复制对话</button>
+                <button type="button" id="detail-copy-prompt">复制为 Prompt</button>
+                <button type="button" id="detail-open-origin">跳转原网页</button>
+                <button type="button" id="detail-export-md">导出 Markdown</button>
+                <button type="button" id="detail-delete" class="danger">删除</button>
+              </div>
+            </div>
+          </div>
+          <div class="cm-detail-meta">
+            <div class="cm-meta-left">
+              <span id="detail-platform" class="cm-platform-tag"></span>
+              <span class="cm-msg-count">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span id="detail-count">0</span>
+              </span>
+              <span id="detail-current-badge" class="cm-current-badge" hidden>Current</span>
+            </div>
+            <span class="cm-meta-time">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+              <span id="detail-updated"></span>
+            </span>
+          </div>
+        </div>
+        <div id="detail-messages" class="cm-detail-messages"></div>
+      </section>
+
+      <!-- 3. 采集与桌面同步视图 -->
+      <section id="tab-panel-connections" class="cm-view cm-scroll-view" hidden>
+        <div class="cm-section-card">
+          <h3 class="cm-card-heading">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            <span>同步到 MemoCat 工作台</span>
+          </h3>
+          <p id="conn-saved-summary" class="cm-conn-primary">0 段对话已保存</p>
+          <p id="conn-address-summary" class="cm-conn-sub">未连接本机 MemoCat</p>
+          <div class="cm-conn-actions">
+            <button type="button" id="conn-primary-btn" class="cm-dark-pill">一键连接 MemoCat 并同步</button>
+            <button type="button" id="conn-sync-now-btn" class="cm-link-btn" hidden>立即同步</button>
+            <button type="button" id="conn-unlink-btn" class="cm-link-btn" hidden>断开连接</button>
+          </div>
+          <details class="cm-advanced-conn">
+            <summary>自定义本机地址</summary>
+            <div class="cm-advanced-row">
+              <input id="conn-url-input" type="url" placeholder="http://127.0.0.1:3792">
+            </div>
+          </details>
+        </div>
+
+        <div class="cm-section-card">
+          <h3 class="cm-card-heading">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>平台采集开关</span>
+          </h3>
+          <p class="cm-card-desc">控制各站点是否展示采集胶囊并参与自动保存</p>
+          <p id="platform-global-paused" class="cm-paused-banner" hidden>自动保存已暂停；平台启用配置会在开启自动保存后生效。</p>
+          <div id="platform-list" class="cm-platform-list" role="group" aria-label="平台配置"></div>
+        </div>
+      </section>
+
+      <!-- 4. 存储与备份设置视图 -->
+      <section id="tab-panel-settings" class="cm-view cm-scroll-view" hidden>
+        <div class="cm-section-card">
+          <h3 class="cm-card-heading">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>采集与外观</span>
+          </h3>
+          <div class="cm-setting-row">
+            <div class="cm-setting-copy">
+              <strong>自动保存对话</strong>
+              <p>在支持的 AI 对话页面自动归档可见消息</p>
+            </div>
+            <label class="cm-switch">
+              <input type="checkbox" id="auto-save-toggle" aria-label="自动保存对话">
+              <span class="cm-slider"></span>
+            </label>
+          </div>
+          <div class="cm-setting-row cm-theme-row">
+            <div class="cm-setting-copy">
+              <strong>外观主题</strong>
+              <p>跟随系统或手动切换浅色 / 深色模式</p>
+            </div>
+            <select id="sidebar-theme-select" class="cm-select-compact" aria-label="外观主题">
+              <option value="system">跟随系统</option>
+              <option value="light">浅色</option>
+              <option value="dark">深色</option>
+            </select>
+          </div>
+          <div class="cm-capture-now-row">
+            <button type="button" id="capture-active-btn" class="cm-pill-btn accent wide">保存当前页面对话</button>
+          </div>
+        </div>
+
+        <div class="cm-section-card">
+          <h3 class="cm-card-heading">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <span>存储与备份</span>
+          </h3>
+          <div class="cm-storage-row">
+            <span>已使用存储</span>
+            <strong id="storage-usage">0 B / 1 GB</strong>
+          </div>
+          <div class="cm-storage-track">
+            <div id="storage-bar" class="cm-storage-fill"></div>
+          </div>
+          <div class="cm-storage-actions">
+            <div class="cm-export-wrap">
+              <button type="button" id="export-btn" class="cm-export-btn">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>导出数据</span>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div id="export-menu" class="cm-dropdown-menu left" hidden>
+                <button type="button" id="export-json">导出 JSON 备份</button>
+                <button type="button" id="export-md">合并导出 Markdown</button>
+              </div>
+            </div>
+            <button type="button" id="clear-all-btn" class="cm-clear-btn" title="清空数据" aria-label="清空数据">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <details class="cm-backup-drawer">
+            <summary>
+              <span class="cm-drawer-title">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                <span>数据备份恢复</span>
+              </span>
+              <svg class="cm-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="cm-backup-drawer-body">
+              <p>支持导入 MemoCat JSON 备份（增量合并恢复，不覆盖已有记录）。</p>
+              <button type="button" id="import-backup-btn" class="cm-pill-btn muted wide">导入 JSON 备份</button>
+              <input id="import-backup-file" type="file" accept=".json,application/json" hidden>
+            </div>
+          </details>
+        </div>
+
+        <div class="cm-section-card">
+          <h3 class="cm-card-heading">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>关于</span>
+          </h3>
+          <div class="cm-about-rows">
+            <div class="cm-about-row"><span>版本</span><strong id="about-version">0.5.0</strong></div>
+            <div class="cm-about-row"><span>存储模式</span><strong>纯本机离线 · 无遥测</strong></div>
+          </div>
+          <button type="button" id="open-full-library" class="cm-outline-pill wide">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>打开完整工作台页面</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 确认弹窗 -->
+  <div id="confirm-modal" class="cm-modal" hidden>
+    <div class="cm-modal-card">
+      <h3 id="confirm-modal-title">确认删除</h3>
+      <p id="confirm-modal-desc">确定要删除这条对话记忆吗？</p>
+      <div class="cm-modal-actions">
+        <button type="button" id="confirm-cancel" class="cm-pill-btn muted">取消</button>
+        <button type="button" id="confirm-ok" class="cm-pill-btn danger">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 通知 -->
+  <div id="toast" class="cm-toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="lib/core.js"></script>
+  <script type="module" src="sidebar.js"></script>
+</body>
+</html>

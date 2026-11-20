@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support &amp; FAQ · MemoCat</title>
+  <meta name="description" content="MemoCat Desktop and Browser Extension quick start guide, sandbox folder permissions, extension pairing, MCP configuration, and FAQ.">
+  <link rel="canonical" href="https://memocat.qiwihui.com/en/support.html">
+  <link rel="alternate" hreflang="en" href="https://memocat.qiwihui.com/en/support.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://memocat.qiwihui.com/support.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="doc-main">
+    <nav class="doc-nav" aria-label="Page Navigation">
+      <a href="./">← Back to MemoCat Home</a>
+      <div class="doc-nav-right">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="../support.html" lang="zh-Hans">简体中文</a>
+        <button id="site-theme-toggle" type="button" class="theme-btn" aria-label="Switch Theme">
+          <span class="theme-label">System</span>
+        </button>
+      </div>
+    </nav>
+
+    <h1>Support &amp; FAQ</h1>
+    <p class="doc-meta">MemoCat v0.5.0 · For bug reports or questions, please open an issue on <a href="https://github.com/qiwihui/MemoCat/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a> and include your macOS version and run mode (Desktop / Web / Extension).</p>
+
+    <h2>Quick Start</h2>
+    <ol>
+      <li><strong>Authorize Local Folders</strong>: Open "Data Pipeline" in MemoCat, expand Codex (<code>~/.codex</code>), Claude Code (<code>~/.claude/projects</code>), Grok Bot, or Antigravity, click "Choose Folder…" to grant read-only access, enable the toggle, and run "Sync Now".</li>
+      <li><strong>Pair Browser Extension</strong>: Load <code>dist/memocat-extension</code> in Chrome/Edge, save a conversation via the floating button (or turn on Auto-save), and click "Connect &amp; Sync" under extension Connections.</li>
+      <li><strong>Configure MCP Clients</strong>: Under "Data Pipeline → Local MCP Endpoints", copy the configuration for Codex, Claude Code, or another local HTTP MCP client, choose allowed sources, and click "Test Handshake" to verify <code>127.0.0.1:3792</code>.</li>
+    </ol>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <details class="faq-item">
+      <summary>How do I pick hidden folders like <code>~/.codex</code> in the macOS sandboxed desktop app?</summary>
+      <p>Click "Choose Folder…" inside any source card under Data Pipeline. MemoCat configures the open dialog with <code>showHiddenFiles</code> enabled. If hidden folders still do not appear in macOS Finder view, press <code>⌘ + Shift + .</code> to toggle hidden files or press <code>⌘ + Shift + G</code> to enter the folder path directly. Permissions persist across restarts via Security-Scoped Bookmarks.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>What if extension sync fails after rotating the pairing token or reloading the unpacked extension?</summary>
+      <p>Ensure MemoCat Desktop or the local web server is running on port <code>3792</code>. If you rotated the secret token in the desktop app or reloaded the unpacked extension (changing its 32-char ID), simply click "Connect &amp; Sync" again in the extension. It automatically re-pairs over <code>127.0.0.1</code> without losing pending outbox changes.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Why are unexpanded scroll history or remote web images missing from extension captures?</summary>
+      <p>The browser extension only reads text messages currently rendered in the active page DOM. It does not scrape private platform APIs or download remote images, audio, or video. For long virtualized threads, messages observed once are retained via partial-window reconciliation and will not be overwritten when older DOM nodes scroll out of view.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>How can I restrict which sources an AI tool can read over MCP?</summary>
+      <p>In "Data Pipeline → Local MCP Endpoints", expand the client card (such as <code>Codex</code>), uncheck "All saved sources", select only the specific sources you want to allow, and save the scope. When zero sources are selected, the MCP server rejects both <code>recall</code> and <code>list_conversations</code> for that endpoint.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Where is my archive stored, and how do I back it up or erase it?</summary>
+      <p>Local web mode stores <code>memo.sqlite</code> under <code>~/.memocat/&lt;userId&gt;/</code> (or <code>MEMO_DATA_DIR</code>); Desktop mode uses Electron's <code>userData/library/memo.sqlite</code>. Check Settings → Local Data Directory for the active path. Quit MemoCat cleanly before copying the directory to back it up, or delete the directory to remove all local data. Extension backups can be exported as JSON or cleared under Extension Settings.</p>
+    </details>
+
+    <h2>Privacy</h2>
+    <p>MemoCat runs strictly offline with no remote backend or telemetry. See the <a href="privacy.html">Privacy Policy</a> for full details.</p>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <span>MemoCat v0.5.0 · Support</span>
+      <div class="footer-links">
+        <a href="./">Product Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="../support.html" lang="zh-Hans">简体中文</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>

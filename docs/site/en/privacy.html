@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy · MemoCat</title>
+  <meta name="description" content="MemoCat Desktop and Browser Extension Privacy Policy: local-first, offline-only architecture with zero accounts, zero remote servers, and zero telemetry.">
+  <link rel="canonical" href="https://memocat.qiwihui.com/en/privacy.html">
+  <link rel="alternate" hreflang="en" href="https://memocat.qiwihui.com/en/privacy.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://memocat.qiwihui.com/privacy.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="doc-main">
+    <nav class="doc-nav" aria-label="Page Navigation">
+      <a href="./">← Back to MemoCat Home</a>
+      <div class="doc-nav-right">
+        <a href="support.html">Support</a>
+        <a href="../privacy.html" lang="zh-Hans">简体中文</a>
+        <button id="site-theme-toggle" type="button" class="theme-btn" aria-label="Switch Theme">
+          <span class="theme-label">System</span>
+        </button>
+      </div>
+    </nav>
+
+    <h1>MemoCat Privacy Policy</h1>
+    <p class="doc-meta">Effective Date: November 20, 2026 · Covered Products: MemoCat Desktop (<code>com.qiwihui.memocat.desktop</code>) and MemoCat Browser Extension (<code>MemoCat · AI 对话归档</code>)</p>
+
+    <div class="doc-summary">
+      <strong>Overview:</strong> MemoCat is built with a local-first, offline-only architecture. MemoCat has no user accounts, no remote backend servers, and no telemetry, analytics, or advertising SDKs. We do not collect, transmit, sell, or share your conversations, folder paths, or usage data.
+    </div>
+
+    <h2>1. Data Accessed and Stored Locally</h2>
+    <ul>
+      <li><strong>User-Selected Local Folders (Desktop App)</strong>: MemoCat Desktop does not silently scan unauthorized system directories. In Mac App Store sandboxed builds, folder access is strictly read-only and granted only when you explicitly pick directories via the macOS file dialog (such as Codex, Claude Code, Grok Bot, or Antigravity log directories), persisted locally via macOS Security-Scoped Bookmarks (<code>com.apple.security.files.user-selected.read-only</code> and <code>com.apple.security.files.bookmarks.app-scope</code>).</li>
+      <li><strong>Supported AI Web Pages (Browser Extension)</strong>: Content scripts execute solely on the explicit AI chat origins declared in <code>manifest.json</code>. When you click Save or enable auto-save for a specific platform, visible conversation text from the active tab is stored locally in browser <code>IndexedDB</code> and preferences in <code>chrome.storage.local</code>.</li>
+      <li><strong>Local Database</strong>: Imported messages, local hash-cached images, sync state, and MCP delivery audit logs are stored exclusively on your device inside local SQLite (<code>memo.sqlite</code>).</li>
+    </ul>
+
+    <h2>2. Local Loopback Communication</h2>
+    <ul>
+      <li>Optional synchronization between the Chrome Extension and MemoCat Desktop, as well as the local MCP endpoints for local AI clients, operates <strong>strictly over the localhost loopback interface (<code>127.0.0.1</code>)</strong> (default port <code>3792</code>). No conversation data leaves your computer.</li>
+      <li>Extension-to-desktop pairing validates the extension's 32-character ID alongside a locally generated 256-bit random Bearer token; per-client MCP switches and source allowlists remain under your control.</li>
+    </ul>
+
+    <h2>3. Tracking and Third Parties</h2>
+    <ul>
+      <li>MemoCat sets <code>NSPrivacyTracking = false</code> and declares zero collected data types in <code>PrivacyInfo.xcprivacy</code>.</li>
+      <li>No third-party tracking libraries, remote scripts (<code>script-src 'self'</code>), or external network beacons are used.</li>
+    </ul>
+
+    <h2>4. User Control and Deletion</h2>
+    <ul>
+      <li>You can delete individual conversations or clear the entire archive inside the browser extension at any time, and export portable Markdown or JSON backups.</li>
+      <li>On macOS, you can disable any ingestion source, revoke folder access, or delete the local MemoCat data directory to permanently remove all stored data and cached attachments.</li>
+      <li>Note: Local <code>memo.sqlite</code> storage and exported JSON backups contain plaintext text without additional app-level at-rest encryption; protect your device with macOS FileVault and standard user permissions.</li>
+    </ul>
+
+    <h2>5. Contact</h2>
+    <p>For privacy inquiries or support requests related to store listings, please open an issue in the project repository at <a href="https://github.com/qiwihui/MemoCat/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a> or visit the <a href="support.html">Support page</a>.</p>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <span>MemoCat v0.5.0 · Privacy Policy</span>
+      <div class="footer-links">
+        <a href="./">Product Home</a>
+        <a href="support.html">Support</a>
+        <a href="../privacy.html" lang="zh-Hans">简体中文</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>

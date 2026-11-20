@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>对话工作台 · MemoCat</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="library">
+  <!-- 左侧主导航栏 -->
+  <aside class="sidebar">
+    <a class="brand" href="#library">
+      <img src="icons/icon64.png" alt="">
+      <span>MemoCat<small>浏览器工作台</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="#library" data-nav="library" class="active" aria-current="page">
+        <span class="nav-label">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+          <strong>对话工作台</strong>
+        </span>
+        <span id="nav-count" class="nav-badge">0</span>
+      </a>
+      <a href="#connections" data-nav="connections">
+        <span class="nav-label">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M7.2 6h4.3a2 2 0 0 1 2 2v4m-6.3 6h4.3a2 2 0 0 0 2-2v-4m0 0h3.3"/></svg>
+          <strong>采集与桌面同步</strong>
+        </span>
+        <span id="nav-sync-dot" class="nav-dot"></span>
+      </a>
+      <a href="#settings" data-nav="settings">
+        <span class="nav-label">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+          <strong>存储与设置</strong>
+        </span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-status-card">
+        <div class="sidebar-status-head">
+          <span class="local-tag" id="sidebar-sync-tag">● 本地存储</span>
+        </div>
+        <p id="sidebar-sync-desc">所有 AI 对话均保存在这台电脑中，支持随时导出与桌面端同步。</p>
+      </div>
+      <small id="sidebar-version">MemoCat · 0.5.0</small>
+    </div>
+  </aside>
+
+  <!-- 右侧主工作区 -->
+  <div class="workspace">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="page-title">对话工作台</h1>
+        <p id="summary" class="topbar-summary">0 段对话 · 0 条消息 · 0 个平台</p>
+      </div>
+      <div class="mobile-nav-group">
+        <a class="mobile-nav" href="#library" data-nav="library">工作台</a>
+        <a class="mobile-nav" href="#connections" data-nav="connections">同步</a>
+        <a class="mobile-nav" href="#settings" data-nav="settings">设置</a>
+      </div>
+      <div class="topbar-right">
+        <span id="capture-status" class="status-pill">手动保存</span>
+        <button id="library-theme-toggle" type="button" class="secondary theme-btn" title="切换外观主题">
+          <svg class="theme-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
+          <span id="library-theme-label">系统</span>
+        </button>
+        <button id="refresh" type="button" class="secondary">刷新</button>
+      </div>
+    </header>
+
+    <!-- 1. 对话工作台双栏视图 -->
+    <main id="archive">
+      <section class="workbench-statusbar">
+        <div class="compact-metrics">
+          <span class="metric-pill">总对话 <strong id="stat-conversations" class="accent">0</strong></span>
+          <span class="metric-pill">今日 +<strong id="stat-today">0</strong></span>
+          <span class="metric-pill">消息 <strong id="stat-messages">0</strong></span>
+          <span class="metric-pill">已用 <strong id="stat-storage">0 B</strong></span>
+        </div>
+        <div class="actions">
+          <button id="import" type="button" class="secondary">导入备份</button>
+          <button id="export-all" type="button" class="primary">导出备份</button>
+          <input id="import-file" type="file" accept=".json,application/json" hidden>
+        </div>
+      </section>
+
+      <div class="archive-grid">
+        <!-- 左栏：搜索、平台胶囊筛选与记忆列表 -->
+        <section class="list-pane" aria-label="会话列表">
+          <div class="list-controls">
+            <label class="search-label">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="search" type="search" placeholder="搜索对话标题或内容…" aria-label="搜索标题或正文">
+              <kbd>⌘ K</kbd>
+            </label>
+            <div id="library-platform-pills" class="platform-pills" role="group" aria-label="平台快速筛选"></div>
+            <div class="filters">
+              <select id="platform-filter" aria-label="平台筛选">
+                <option value="">全部平台</option>
+              </select>
+              <span id="result-count">0 段对话</span>
+            </div>
+            <details class="date-filter">
+              <summary>
+                <span>按日期范围筛选</span>
+                <span id="date-filter-badge" class="filter-active-dot" hidden></span>
+              </summary>
+              <div class="quick-date-row">
+                <button type="button" id="quick-week" class="chip-btn">最近一周</button>
+                <button type="button" id="quick-month" class="chip-btn">最近一月</button>
+                <button type="button" id="quick-clear" class="chip-btn">重置日期</button>
+              </div>
+              <div class="date-inputs-grid">
+                <label><span>从</span><input id="from" type="date"></label>
+                <label><span>至</span><input id="to" type="date"></label>
+              </div>
+            </details>
+          </div>
+
+          <div id="conversation-list" class="conversation-list" aria-live="polite"></div>
+          <button id="more" type="button" class="secondary wide" hidden>加载更多</button>
+        </section>
+
+        <!-- 右栏：对话阅读详情区 -->
+        <article id="detail" class="detail">
+          <div class="empty">
+            <div class="empty-symbol">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+            </div>
+            <h2>对话工作台</h2>
+            <p>在左侧选择任意记录，按结构化问答块阅读完整内容；可使用 <code>↑</code> <code>↓</code> 切换记录或 <code>⌘K</code> 搜索。</p>
+            <div class="actions">
+              <a href="#connections" class="primary">配置平台与桌面同步</a>
+              <a href="#settings" class="secondary">备份与设置</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <!-- 2. 采集与桌面同步视图 -->
+    <main id="connections" class="page-scroll" hidden>
+      <div class="page-container">
+        <div class="settings-intro">
+          <span class="eyebrow">桌面协同与平台采集</span>
+          <h2>与本机 MemoCat 工作台互通</h2>
+          <p>一键完成本地应用配对与变更队列同步，并在下方配置各 AI 网站采集开关。</p>
+        </div>
+
+        <section class="setting-group connection-hero-card">
+          <div class="section-title">
+            <div class="title-with-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+              <h3>同步到桌面端</h3>
+            </div>
+            <span class="local-tag" id="sync-badge">待连接</span>
+          </div>
+          <p class="conn-saved-headline" id="conn-saved-count">已保存 0 段对话</p>
+          <p id="sync-state" class="conn-status-line" role="status">尚未连接本机 MemoCat</p>
+
+          <form id="sync-form">
+            <div class="actions conn-main-actions">
+              <button id="connect-app" class="dark-pill-btn" type="submit">一键连接 MemoCat 并同步</button>
+              <button id="open-desktop-web" class="secondary" type="button" hidden>打开 MemoCat 工作台 ↗</button>
+              <button id="sync-now" class="secondary" type="button">立即同步</button>
+              <button id="disconnect-app" class="danger-text" type="button" hidden>断开连接</button>
+            </div>
+
+            <label class="setting-row compact-row">
+              <span>
+                <strong>开启后台自动同步</strong>
+                <small>当采集到新的 AI 回复或删除会话时，自动交接到本机 MemoCat 资料库。</small>
+              </span>
+              <input id="sync-enabled" type="checkbox" role="switch">
+            </label>
+
+            <details class="date-filter advanced-box">
+              <summary>高级连接设置（本机端口与扩展 ID）</summary>
+              <div class="advanced-fields">
+                <label>
+                  <span>本地应用地址（默认 http://127.0.0.1:3792）</span>
+                  <input id="sync-url" type="url" required placeholder="http://127.0.0.1:3792">
+                </label>
+                <label>
+                  <span>当前扩展 ID</span>
+                  <input id="extension-id" readonly>
+                </label>
+                <input id="sync-token" type="hidden">
+              </div>
+            </details>
+          </form>
+        </section>
+
+        <section class="setting-group">
+          <div class="section-title">
+            <div class="title-with-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <h3>平台采集配置</h3>
+            </div>
+          </div>
+          <p>选择允许采集和自动保存的 AI 对话平台。关闭某个平台后，该网页将隐藏采集胶囊。</p>
+          <p id="platform-global-paused" class="paused-notice" hidden>当前「自动保存对话」总开关已关闭；您仍可在以下已启用的平台网页手动点击保存，或前往「存储与设置」开启自动保存。</p>
+          <div id="platform-settings" class="platform-grid"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- 3. 存储与设置视图 -->
+    <main id="settings" class="page-scroll" hidden>
+      <div class="page-container">
+        <div class="settings-intro">
+          <span class="eyebrow">扩展存储与偏好</span>
+          <h2>采集模式、外观与本地备份</h2>
+          <p>仅保存受支持页面里已加载的文字。图片、附件和未展开的历史不会自动下载。</p>
+        </div>
+
+        <section class="setting-group">
+          <div class="section-title">
+            <div class="title-with-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <h3>基础设置与外观</h3>
+            </div>
+          </div>
+          <label class="setting-row">
+            <span>
+              <strong>自动保存对话</strong>
+              <small>在支持的 AI 对话页面回复完成后，后台自动保存页面可见的对话记录。关闭后仍可手动保存。</small>
+            </span>
+            <input id="auto-save" type="checkbox" role="switch">
+          </label>
+          <div class="setting-row">
+            <span>
+              <strong>外观主题</strong>
+              <small>在弹出面板、网页侧栏与完整工作台间自动同步。</small>
+            </span>
+            <select id="library-theme-select" aria-label="外观主题">
+              <option value="system">跟随系统</option>
+              <option value="light">浅色模式</option>
+              <option value="dark">深色模式</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="setting-group">
+          <div class="section-title">
+            <div class="title-with-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <h3>存储管理与备份</h3>
+            </div>
+          </div>
+          <div class="storage-meter-head">
+            <span>已使用存储空间</span>
+            <strong id="settings-storage-usage">0 B / 1 GB</strong>
+          </div>
+          <div class="storage-meter-bar">
+            <div id="settings-storage-fill" class="storage-meter-fill"></div>
+          </div>
+          <p>JSON 备份保留完整文字、来源网址和消息标识，可随时重新导入恢复。导入采用增量合并方式，不会覆盖已有记录。</p>
+          <div class="actions">
+            <button id="settings-export" type="button" class="primary">导出 JSON 备份</button>
+            <button id="settings-export-md" type="button" class="secondary">合并导出 Markdown</button>
+            <button id="settings-import" type="button" class="secondary">导入 JSON 备份</button>
+            <button id="clear" type="button" class="danger">清空资料库</button>
+          </div>
+          <small>清空后不会自动重新采集已删除的会话；在原页面手动点击保存可以恢复采集。已连接桌面端时，删除操作也会同步交接到本地应用。</small>
+        </section>
+
+        <section class="setting-group">
+          <div class="section-title">
+            <div class="title-with-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <h3>关于 MemoCat 扩展</h3>
+            </div>
+          </div>
+          <div class="about-grid">
+            <div><span>当前版本</span><strong id="about-version">0.5.0</strong></div>
+            <div><span>支持平台</span><strong>ChatGPT / Claude / Gemini / DeepSeek / 元宝 / 豆包 / Kimi / 千问 / Grok</strong></div>
+            <div><span>隐私策略</span><strong>无云端账号 · 无遥测上报 · 纯本机归档与同步</strong></div>
+          </div>
+        </section>
+
+        <footer class="settings-footer">无账号 · 无云端遥测 · 纯本机独立归档扩展</footer>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" role="status" hidden></div>
+  <dialog id="confirm-dialog">
+    <form method="dialog">
+      <h2 id="confirm-title">确认删除</h2>
+      <p id="confirm-description"></p>
+      <div class="actions">
+        <button value="cancel" class="secondary">取消</button>
+        <button value="confirm" class="danger">确认删除</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="lib/core.js"></script>
+  <script type="module" src="library.js"></script>
+</body>
+</html>

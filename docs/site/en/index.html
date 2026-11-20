@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MemoCat · Local AI Chat Archive, Structured Workbench &amp; MCP Memory Recall</title>
+  <meta name="description" content="MemoCat locally archives conversations from desktop CLI AI tools (Codex, Claude Code, Grok Bot, Antigravity) and 9 AI web platforms (ChatGPT, Claude, Gemini, DeepSeek, etc.) into SQLite with full-text search and local HTTP MCP recall.">
+  <link rel="canonical" href="https://memocat.qiwihui.com/en/">
+  <link rel="alternate" hreflang="en" href="https://memocat.qiwihui.com/en/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://memocat.qiwihui.com/">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/icon.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MemoCat · Local AI Chat Archive &amp; Cross-AI MCP Workbench">
+  <meta property="og:description" content="Local-first, offline-only archive and retrieval across 4 local AI log adapters and 9 web AI chat platforms.">
+  <meta property="og:image" content="https://memocat.qiwihui.com/assets/workbench-light.png">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./">
+        <img src="../assets/icon.png" alt="MemoCat Icon" width="30" height="30">
+        <span>MemoCat</span>
+        <span class="version-pill">v0.5.0</span>
+      </a>
+      <nav class="navlinks" aria-label="Primary Navigation">
+        <a href="#platforms">Platforms</a>
+        <a href="#features">Architecture</a>
+        <a href="#mcp">MCP Interop</a>
+        <a href="#install">Get Started</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="../" lang="zh-Hans">简体中文</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="site-theme-toggle" type="button" class="theme-btn" aria-label="Switch Theme">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/>
+          </svg>
+          <span class="theme-label">System</span>
+        </button>
+        <a class="nav-cta" href="#install">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-head">
+          <div class="eyebrow">
+            <span class="eyebrow-dot" aria-hidden="true"></span>
+            <span>Local-First Architecture · macOS Desktop App + Chrome Extension</span>
+          </div>
+          <h1>Unify Scattered AI Chats into a Local Searchable &amp; Recallable Workbench</h1>
+          <p class="hero-lead">MemoCat indexes local session logs from Codex, Claude Code, Grok Bot, and Antigravity alongside web conversations across 9 AI chat sites into a single local SQLite store—with structured reading, full-text search, and local HTTP MCP recall on <code>127.0.0.1:3792</code>.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">Download &amp; Build Guide</a>
+            <a class="btn btn-secondary" href="https://github.com/qiwihui/MemoCat" target="_blank" rel="noopener noreferrer">GitHub Repository ↗</a>
+          </div>
+          <div class="hero-chips">
+            <span class="metric-chip">4 Local AI Log Adapters</span>
+            <span class="metric-chip">9 Web AI Platforms</span>
+            <span class="metric-chip">HTTP MCP Cross-Tool Recall</span>
+            <span class="metric-chip">No Accounts · No Cloud · No Telemetry</span>
+          </div>
+        </div>
+
+        <div class="showcase-wrap">
+          <div class="showcase-tabs" role="tablist" aria-label="MemoCat UI Showcase">
+            <button type="button" class="showcase-tab active" role="tab" aria-selected="true"
+              data-src="../assets/workbench-light.png"
+              data-alt="MemoCat Conversation Workbench in Light Mode"
+              data-title="Conversation Workbench (Light)"
+              data-desc="Left pane source filter pills and ⌘K full-text search; right pane chat-bubble turns with code block copy.">Workbench · Light</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="../assets/workbench-dark.png"
+              data-alt="MemoCat Conversation Workbench in Dark Mode"
+              data-title="Conversation Workbench (Dark)"
+              data-desc="Supports System, Light, and Dark modes across both the macOS desktop shell and browser extension.">Workbench · Dark</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="../assets/recall-sandbox.png"
+              data-alt="MemoCat Memory Recall Sandbox and MCP Audit Stream"
+              data-title="Memory Recall &amp; MCP Audit"
+              data-desc="Dual-track primary query + up to 8 supplementary keywords, 9,600-token budget meter, and committed MCP audit snapshots.">Recall &amp; Audit</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="../assets/data-pipeline.png"
+              data-alt="MemoCat Data Pipeline and Local MCP Endpoints"
+              data-title="Data Pipeline &amp; Source Whitelists"
+              data-desc="Manage read-only folder authorizations, Chrome extension pairing, and per-client MCP endpoints with source scopes.">Data Pipeline</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="../assets/storage-stats.png"
+              data-alt="MemoCat Storage Insights and Ingestion Statistics"
+              data-title="Storage Insights &amp; Statistics"
+              data-desc="Inspect SQLite directory byte footprint, 7/30-day stacked ingestion trends, and per-source message distribution.">Storage &amp; Stats</button>
+            <button type="button" class="showcase-tab" role="tab" aria-selected="false"
+              data-src="../assets/extension-library.png"
+              data-alt="MemoCat Chrome Extension Workbench"
+              data-title="Browser Extension Workbench"
+              data-desc="Independent IndexedDB archive, multi-platform filtering, Markdown/JSON import-export, and one-click desktop sync.">Extension Workbench</button>
+          </div>
+
+          <div class="showcase-frame">
+            <div class="showcase-screen">
+              <img id="showcase-img" src="../assets/workbench-light.png" alt="MemoCat Conversation Workbench in Light Mode" width="2880" height="1800">
+            </div>
+            <div class="showcase-caption">
+              <span><strong id="showcase-title">Conversation Workbench (Light)</strong>: <span id="showcase-desc">Left pane source filter pills and ⌘K full-text search; right pane chat-bubble turns with code block copy.</span></span>
+              <span>Live Capture · MemoCat v0.5.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="platforms" class="section section-alt" aria-labelledby="platforms-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">Ingestion Sources</span>
+          <h2 id="platforms-title">Dual-Input Archive: Local AI Logs &amp; Web AI Chats</h2>
+          <p>The desktop workbench reads local AI tool transcripts strictly read-only, while the Manifest V3 browser extension captures loaded web conversations and syncs incrementally over localhost.</p>
+        </div>
+
+        <div class="platform-columns">
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <div>
+                <h3>Local CLI &amp; Desktop AI Logs</h3>
+                <p>Line-by-line streaming ingestion without altering original logs</p>
+              </div>
+              <span class="pill">4 Adapters</span>
+            </div>
+
+            <div class="source-grid">
+              <div class="source-item">
+                <img src="../assets/platforms/codex.png" alt="Codex" width="34" height="34">
+                <div>
+                  <strong>Codex</strong>
+                  <code>~/.codex</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="../assets/platforms/claude-code.png" alt="Claude Code" width="34" height="34">
+                <div>
+                  <strong>Claude Code</strong>
+                  <code>~/.claude/projects</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="../assets/platforms/grok-bot.png" alt="Grok Bot" width="34" height="34">
+                <div>
+                  <strong>Grok Bot</strong>
+                  <code>~/Library/.../Grok Bot</code>
+                </div>
+              </div>
+              <div class="source-item">
+                <img src="../assets/platforms/antigravity.png" alt="Antigravity" width="34" height="34">
+                <div>
+                  <strong>Antigravity</strong>
+                  <code>~/.gemini/antigravity</code>
+                </div>
+              </div>
+            </div>
+
+            <ul class="feature-bullets">
+              <li><strong>Read-Only Sandbox Bookmarks</strong>: Desktop uses macOS native directory picker with Security-Scoped Bookmarks (supporting hidden folders) to persist read-only permissions across launches.</li>
+              <li><strong>Streaming Large Log Parser</strong>: Parses JSONL and `.blob` replicas line-by-line with no 64 MB cap; pre/post-read identity, size, and mtime verification preserves prior versions on malformed writes.</li>
+              <li><strong>Local Hash Image Cache</strong>: Ingests base64 and local image references (PNG/JPEG/GIF/WebP up to 32 MB) into local cache for offline inspection and click-to-zoom.</li>
+              <li><strong>Scheduled Auto-Sync</strong>: Configurable 1–1440 minute interval (default 5 min), merging duplicate log snapshots idempotently without inflating daily counts.</li>
+            </ul>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <div>
+                <h3>Browser Extension (Manifest V3)</h3>
+                <p>Floating save pill &amp; in-page drawer sidebar on supported chat sites</p>
+              </div>
+              <span class="pill pill-green">9 Web Platforms</span>
+            </div>
+
+            <div class="web-grid">
+              <div class="web-item"><img src="../assets/platforms/chatgpt.png" alt="ChatGPT" width="22" height="22"><span>ChatGPT</span></div>
+              <div class="web-item"><img src="../assets/platforms/claude.png" alt="Claude" width="22" height="22"><span>Claude</span></div>
+              <div class="web-item"><img src="../assets/platforms/gemini.png" alt="Gemini" width="22" height="22"><span>Gemini</span></div>
+              <div class="web-item"><img src="../assets/platforms/deepseek.png" alt="DeepSeek" width="22" height="22"><span>DeepSeek</span></div>
+              <div class="web-item"><img src="../assets/platforms/yuanbao.png" alt="Tencent Yuanbao" width="22" height="22"><span>Yuanbao</span></div>
+              <div class="web-item"><img src="../assets/platforms/doubao.png" alt="Doubao" width="22" height="22"><span>Doubao</span></div>
+              <div class="web-item"><img src="../assets/platforms/kimi.png" alt="Kimi" width="22" height="22"><span>Kimi</span></div>
+              <div class="web-item"><img src="../assets/platforms/qianwen.png" alt="Qianwen" width="22" height="22"><span>Qianwen</span></div>
+              <div class="web-item"><img src="../assets/platforms/grok.png" alt="Grok" width="22" height="22"><span>Grok</span></div>
+            </div>
+
+            <ul class="feature-bullets">
+              <li><strong>Partial-Window DOM Reconciliation</strong>: Uses <code>MemoCore.reconcile</code> with stable DOM IDs and exact text cursors so virtualized scrolling on long threads never erases saved history.</li>
+              <li><strong>Three Extension Surfaces</strong>: On-page floating button &amp; slide-over sidebar, toolbar popup, and full library workbench with title editing, recapture, and source links.</li>
+              <li><strong>Backup &amp; Portable Export</strong>: Stored in browser <code>IndexedDB</code> (<code>unlimitedStorage</code>) with per-thread Markdown/JSON export and incremental JSON backup restore.</li>
+              <li><strong>CAS Outbox Desktop Sync</strong>: Pairs with <code>127.0.0.1</code> using a 256-bit Bearer token; monotonic sequence numbers and UUID <code>changeId</code> acks prevent stale overwrites.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section" aria-labelledby="features-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">Core Architecture</span>
+          <h2 id="features-title">Structured Reading, Hybrid Recall &amp; Delivery Auditing</h2>
+          <p>Powered by Node.js 24 built-in <code>node:sqlite</code> and HTTP modules. Desktop and local web interfaces share the exact same indexing, ranking, and delivery engine.</p>
+        </div>
+
+        <div class="capability-grid">
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M13 9h4M13 13h4"/></svg>
+            </div>
+            <h3>Two-Pane Conversation Workbench</h3>
+            <p>Filter threads by source pills or date, and read clean user/assistant chat bubbles with syntax-ready code blocks and question outline navigation.</p>
+            <ul class="spec-list">
+              <li>Quick Search: <code>⌘K</code> across titles, message text, and code</li>
+              <li>Keyboard Flow: <code>↑</code> / <code>↓</code> thread switching + right-edge question outline</li>
+              <li>Export &amp; Reuse: Copy as structured XML prompt, Markdown, or <code>.md</code> file</li>
+              <li>Responsive Shell: Compacts down to quarter-screen width (<code>&lt; 600px</code>)</li>
+            </ul>
+          </article>
+
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8 11h6M11 8v6"/></svg>
+            </div>
+            <h3>Hybrid Search &amp; Region Budget</h3>
+            <p>Combines SQLite WAL + FTS5 <code>trigram</code> indexing with turn-level BM25 neighborhood smoothing to assemble high-signal context within token limits.</p>
+            <ul class="spec-list">
+              <li>Tokenization: CJK overlapping 2-grams + alphanumeric tokens</li>
+              <li>Weights: User turn <code>2.5</code> vs assistant <code>1.0</code>; primary <code>1.0</code> vs keywords <code>0.72</code></li>
+              <li>Region Smoothing: 5-neighbor kernel expands and merges adjacent matches</li>
+              <li>Hard Cap: Up to <code>8</code> regions and ~<code>9,600 tokens</code> per recall call</li>
+            </ul>
+          </article>
+
+          <article class="cap-card">
+            <div class="cap-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>Context Deduplication &amp; Audit Trail</h3>
+            <p>Tracks each AI conversation via <code>process_id</code> and a 3-state delivery table so repeated recalls do not resend already delivered full units.</p>
+            <ul class="spec-list">
+              <li>Caller Binding: Issues <code>process_id</code> scoped to each MCP caller path</li>
+              <li>Delivery States: <code>prepared</code>, <code>committed</code>, and <code>abandoned</code></li>
+              <li>Deduplication: Excludes committed full <code>unitIds</code>; retains truncated parts</li>
+              <li>Audit Stream: Inspect exact text snapshots delivered in past recalls</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="mcp" class="section section-alt" aria-labelledby="mcp-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">Cross-AI Interop</span>
+          <h2 id="mcp-title">Local Streamable HTTP MCP Endpoints</h2>
+          <p>While running, MemoCat exposes stateless JSON-RPC 2.0 POST endpoints on <code>http://127.0.0.1:3792</code> with per-client switches and source whitelists.</p>
+        </div>
+
+        <div class="mcp-layout">
+          <div class="mcp-tools">
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">recall</span>
+                <span class="pill">Memory Retrieval</span>
+              </div>
+              <p>Accepts <code>query</code>, up to 8 <code>alternatives</code>, date range <code>from/to</code>, <code>sources</code> filter, and <code>process_id</code>. Triggers an on-demand sync before returning attributed segments.</p>
+            </article>
+
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">list_conversations</span>
+                <span class="pill">Date Inventory</span>
+              </div>
+              <p>Lists archived conversation metadata across up to 31 days in the host timezone, restricted by the calling client's source whitelist.</p>
+            </article>
+
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <span class="tool-name">Per-Client Source Scopes</span>
+                <span class="pill pill-green">Policy Enforcement</span>
+              </div>
+              <p><code>/mcp/codex</code>, <code>/mcp/claude-code</code>, and <code>/mcp/other-local</code> enforce independent toggle states and source allowlists; requests abort if policy changes mid-recall.</p>
+            </article>
+          </div>
+
+          <div class="code-panel">
+            <div class="code-tabs">
+              <div class="code-tab-group" role="tablist" aria-label="MCP Client Config Examples">
+                <button type="button" class="code-tab active"
+                  data-code='[mcp_servers.memocat]&#10;url = "http://127.0.0.1:3792/mcp/codex"'
+                  data-meta="Target: ~/.codex/config.toml · Built-in handshake test available under Data Pipeline">Codex (TOML)</button>
+                <button type="button" class="code-tab"
+                  data-code='claude mcp add --transport http --scope user memocat http://127.0.0.1:3792/mcp/claude-code'
+                  data-meta="Run in your terminal, then reload MCP servers inside Claude Code">Claude Code (CLI)</button>
+                <button type="button" class="code-tab"
+                  data-code='{&#10;  "mcpServers": {&#10;    "memocat": {&#10;      "type": "http",&#10;      "url": "http://127.0.0.1:3792/mcp/other-local"&#10;    }&#10;  }&#10;}'
+                  data-meta="For other local HTTP MCP clients (enable the endpoint in Data Pipeline first)">Generic Client (JSON)</button>
+              </div>
+              <button id="mcp-copy-btn" type="button" class="copy-btn" data-copied="Copied">Copy Config</button>
+            </div>
+            <pre><code id="mcp-code-content">[mcp_servers.memocat]
+url = "http://127.0.0.1:3792/mcp/codex"</code></pre>
+            <div id="mcp-code-meta" class="code-meta">Target: ~/.codex/config.toml · Built-in handshake test available under Data Pipeline</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="trust-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">Privacy &amp; Boundaries</span>
+          <h2 id="trust-title">Local-Only Security Design &amp; Known Scope</h2>
+          <p>All parsing, indexing, and retrieval execute locally on your machine. Below are the implemented safeguards and current technical boundaries.</p>
+        </div>
+
+        <div class="trust-grid">
+          <div class="trust-card">
+            <h3>Zero Remote Servers or Telemetry</h3>
+            <p>No user accounts, no cloud relay, and no analytics, crash reporting, or tracking SDKs (<code>NSPrivacyTracking = false</code> in the macOS privacy manifest).</p>
+          </div>
+          <div class="trust-card">
+            <h3>Strict Loopback Validation</h3>
+            <p>HTTP endpoints bind exclusively to <code>127.0.0.1</code> and validate <code>Host</code>, <code>Origin</code>, and <code>Sec-Fetch-Site</code>; extension sync checks the paired 32-char extension ID and 256-bit Bearer token.</p>
+          </div>
+          <div class="trust-card">
+            <h3>Sandbox &amp; Content Sanitization</h3>
+            <p>Electron enforces <code>contextIsolation</code> and renderer <code>sandbox</code>; the extension applies <code>script-src 'self'</code> CSP; Markdown output is sanitized via DOMPurify.</p>
+          </div>
+          <div class="trust-card">
+            <h3>Transparent Local Data Control</h3>
+            <p>Local web mode defaults to <code>~/.memocat/&lt;userId&gt;/memo.sqlite</code> (configurable via <code>MEMO_DATA_DIR</code>); desktop stores data under Electron userData for clean backup or deletion.</p>
+          </div>
+        </div>
+
+        <div class="boundary-box">
+          <h3>Current Technical Boundaries (v0.5.0)</h3>
+          <ul>
+            <li>Local <code>memo.sqlite</code> and exported JSON backups store plaintext conversation records without application-layer encryption; rely on macOS FileVault and file permissions.</li>
+            <li>The browser extension captures loaded visible DOM text only; it does not scrape private backend APIs for unexpanded history or auto-download remote images/media.</li>
+            <li>DMG and Mac App Store <code>.pkg</code> builds are generated via included build scripts (<code>npm run build:dmg</code> / <code>npm run build:mas</code>) and require Apple certificates for notarized/store distribution.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="section section-alt" aria-labelledby="install-title">
+      <div class="shell">
+        <div class="section-head">
+          <span class="section-tag">Get Started</span>
+          <h2 id="install-title">Three Ways to Run MemoCat</h2>
+          <p>Requires Node.js 24+ (for built-in <code>node:sqlite</code>). Run the macOS desktop app, the local web server, or the Chrome/Edge extension independently or together.</p>
+        </div>
+
+        <div class="install-grid">
+          <article class="install-card">
+            <span class="install-step">Option 01 · macOS Desktop App</span>
+            <h3>Electron Desktop Workbench</h3>
+            <p>Includes native macOS menu bar, view shortcuts (<code>⌘1..5</code>), background tray service on port 3792, and DMG / MAS bundle scripts.</p>
+            <pre class="install-cmd"><code>git clone https://github.com/qiwihui/MemoCat.git
+cd MemoCat
+npm install
+npm run desktop</code></pre>
+            <p>Run <code>npm run build:dmg</code> to produce a local macOS disk image.</p>
+          </article>
+
+          <article class="install-card">
+            <span class="install-step">Option 02 · Local Web Mode</span>
+            <h3>Node.js Built-in HTTP Server</h3>
+            <p>The backend relies solely on Node.js built-in modules. Open <code>http://127.0.0.1:3792</code> for full archive, recall, and MCP endpoints.</p>
+            <pre class="install-cmd"><code>npm start
+# Custom data directory &amp; port
+MEMO_DATA_DIR=/path/to/data PORT=3792 npm start</code></pre>
+            <p>On macOS, you can also double-click <code>Start MemoCat.command</code> after cloning.</p>
+          </article>
+
+          <article class="install-card">
+            <span class="install-step">Option 03 · Chrome / Edge Extension</span>
+            <h3>Load MV3 Extension</h3>
+            <p>Build the extension package and load the unpacked output under Developer Mode in <code>chrome://extensions</code>.</p>
+            <pre class="install-cmd"><code>npm run build:extension
+# Load unpacked folder:
+# dist/memocat-extension</code></pre>
+            <p>Click "Connect &amp; Sync" inside the extension to automatically pair with port 3792.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <span>MemoCat v0.5.0 · Local AI Chat Archive &amp; Recall Workbench</span>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="support.html">Support</a>
+        <a href="../" lang="zh-Hans">简体中文</a>
+        <a href="https://github.com/qiwihui/MemoCat" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>

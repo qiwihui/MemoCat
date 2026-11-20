@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#6648D4"/><stop offset="1" stop-color="#38206D"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="216" fill="url(#tile)"/>
+  <rect x="68" y="68" width="888" height="888" rx="212" fill="none" stroke="#C1AAFF" stroke-opacity=".38" stroke-width="8"/>
+  <path d="M241 500 L263 311 Q267 270 303 288 L414 354 Q512 332 610 354 L721 288 Q757 270 761 311 L783 500 C815 638 727 733 585 745 L454 823 Q431 837 432 811 L435 744 C299 725 209 636 241 500Z" fill="#FFF3DD"/>
+  <path d="M285 392 L296 322 L365 362Z M739 392 L728 322 L659 362Z" fill="#F6AB9D"/>
+  <path d="M358 537 Q397 492 436 537 M588 537 Q627 492 666 537" stroke="#39266B" stroke-width="23" stroke-linecap="round" fill="none"/>
+  <path d="M493 566 Q512 558 531 566 Q539 571 532 580 L520 593 Q512 602 504 593 L492 580 Q485 571 493 566Z" fill="#39266B"/>
+  <path d="M512 595 C500 620 479 621 465 610 M512 595 C524 620 545 621 559 610" fill="none" stroke="#39266B" stroke-width="13" stroke-linecap="round"/>
+  <path d="M324 580 H368 M656 580 H700" stroke="#F6AB9D" stroke-width="16" stroke-linecap="round"/>
+</svg>

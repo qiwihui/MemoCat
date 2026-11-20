@@ -1,0 +1,38 @@
+{
+  "name": "memocat",
+  "version": "0.5.0",
+  "description": "Local-first AI chat archive, structured workbench, and cross-AI HTTP MCP memory recall.",
+  "homepage": "https://memocat.qiwihui.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qiwihui/MemoCat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qiwihui/MemoCat/issues"
+  },
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "desktop": "electron src/desktop.cjs",
+    "build:extension": "node scripts/build-extension.mjs",
+    "build:cws": "node scripts/build-cws-assets.mjs",
+    "test:extension": "node --test test/browser-extension.test.js",
+    "test:extension:browser": "node scripts/run-extension-e2e.mjs",
+    "build:dmg": "node scripts/build-dmg.mjs",
+    "build:mas": "node scripts/build-mas.mjs",
+    "deploy:pages": "node scripts/deploy-pages.mjs"
+  },
+  "devDependencies": {
+    "electron": "^40.0.0"
+  },
+  "dependencies": {
+    "dompurify": "^3.4.18",
+    "marked": "^18.2.1"
+  }
+}
