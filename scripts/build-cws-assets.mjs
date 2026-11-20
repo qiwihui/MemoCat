@@ -526,7 +526,7 @@ try{
     <div class="strip">${iconStripHTML}</div>
   </div>
   <div class="foot">
-    <span>ChatGPT · Claude · Gemini · DeepSeek · Grok</span>
+    <span>多站点网页对话采集</span>
     <span class="badge">离线无遥测</span>
   </div>
 </body></html>`;
@@ -567,7 +567,7 @@ try{
       </div>
     </div>
     <h1>把分散在各 AI 网站的<br>重要对话留在本机</h1>
-    <p>覆盖 ChatGPT、Claude、Gemini、DeepSeek、Grok 等 9 大平台，支持聊天气泡阅读、深色模式、Prompt 复用与本机 127.0.0.1 桌面库同步。</p>
+    <p>适配多个主流网页 AI 对话平台，支持聊天气泡阅读、深色模式、Prompt 复用与本机 127.0.0.1 桌面库同步。</p>
     <div class="strip">${iconStripHTML}</div>
   </div>
   <div class="right">
@@ -617,8 +617,8 @@ try{
   await rm(dataDir,{recursive:true,force:true});
 }
 
-const zhShort='在本机保存、搜索和导出 ChatGPT、Claude、Gemini、DeepSeek、Grok 等 9 大网页 AI 对话，可选通过 127.0.0.1 同步至桌面端工作台。';
-const enShort='Save, search, and export AI chats from ChatGPT, Claude, Gemini, DeepSeek & Grok locally, with optional localhost desktop sync.';
+const zhShort='在本机保存、搜索和导出网页 AI 对话，支持多平台归档与 Markdown/JSON 备份，可选通过 127.0.0.1 同步至桌面端工作台。';
+const enShort='Save, search, and export AI web conversations locally with Markdown/JSON backup and optional localhost desktop sync.';
 if(enShort.length>132||zhShort.length>132){
   throw new Error('Short description exceeds Chrome Web Store 132-character limit');
 }
@@ -663,21 +663,21 @@ const submissionGuide=`# Chrome Web Store 提交材料清单 · MemoCat (${manif
 
 ### 2. Detailed description（中文 / English）
 \`\`\`text
-MemoCat 是一款采用纯本机离线架构的 AI 对话归档扩展，帮助你把分散在不同 AI 网站的聊天记录稳定保存、整理和检索。
+MemoCat 是一款采用纯本机离线架构的 AI 对话归档扩展，帮助你把分散在网页端的 AI 聊天记录稳定保存、整理和检索。
 
 核心功能：
-• 覆盖 9 大 AI 聊天平台：ChatGPT、Claude、Gemini、DeepSeek、腾讯元宝、豆包、Kimi、千问、Grok（含 x.com/i/grok）。
+• 多站点对话采集：在已适配的 AI 对话网页提取当前加载的问答内容，提供页面保存胶囊与分站点独立开关。
 • 纯本机保存：默认手动保存，支持按站点开启自动保存；全部正文保存在浏览器本地 IndexedDB 中，无账号、无云端上传、无遥测。
-• 对话工作台与侧边抽屉：双栏工作台提供浅色 / 深色 / 跟随系统三种外观，支持平台胶囊筛选、日期筛选、关键词高亮、左右聊天气泡展示、单条复制与「复制为 Prompt」。
+• 对话工作台与侧边抽屉：双栏工作台提供浅色 / 深色 / 跟随系统三种外观，支持来源胶囊筛选、日期筛选、关键词高亮、左右聊天气泡展示、单条复制与「复制为 Prompt」。
 • 长对话安全合并：针对网页虚拟列表仅增量补齐新增消息，不会因顶部旧消息从 DOM 卸载而覆盖或丢失历史。
 • 备份与桌面协同：支持单会话导出、全库 JSON 备份增量恢复与 Markdown 合并导出；也可选择与本机 127.0.0.1 运行的 MemoCat 桌面端配对同步。
 \`\`\`
 
 \`\`\`text
-MemoCat is a local-first Chrome extension that archives, organizes, and searches your AI conversations across 9 platforms—100% stored on your device.
+MemoCat is a local-first Chrome extension that archives, organizes, and searches your AI web conversations—100% stored on your device.
 
 Key Features:
-• Multi-Platform Support: Works on ChatGPT, Claude, Gemini, DeepSeek, Grok (grok.com & x.com/i/grok), Kimi, Qianwen, Doubao, and Yuanbao.
+• Multi-Site Conversation Capture: Extracts loaded Q&A messages on supported AI chat web pages with an in-page save control and per-site toggles.
 • Local-First Storage: Manual capture by default with optional per-site auto-save. Conversations stay in your browser's local IndexedDB—no account, no cloud server, no telemetry.
 • Clean Workbench & In-Page Sidebar: Browse saved threads in left-right chat bubbles with code copy, "Copy as Prompt", platform filter pills, date ranges, keyword highlighting, and Light / Dark / System themes.
 • Virtual-Scroll Safe Merging: Incremental DOM window reconciliation keeps earlier archived messages intact even when long chat pages virtualize old nodes.
